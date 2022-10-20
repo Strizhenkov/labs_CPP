@@ -81,19 +81,19 @@ public:
         }
     }
 
-    class Iterator {
+    class iterator  {
     public:
         using pointer = T*;
         using reference = T&;
 
-        Iterator(pointer ptr, pointer ptrEnd, pointer ptrStart) :
+        iterator(pointer ptr, pointer ptrEnd, pointer ptrStart) :
                 ptr_(ptr), ptrEnd_(ptrEnd), ptrStart_(ptrStart) {}
 
         reference operator*() const {
             return *ptr_;
         }
 
-        Iterator &operator++() {
+        iterator &operator++() {
             ptr_++;
             if (ptr_ == ptrEnd_) {
                 ptr_ = ptrStart_;
@@ -101,14 +101,26 @@ public:
             return *this;
         }
 
-        Iterator operator++(int) {
+        iterator &operator--() {
+            ptr_--;
+            if (ptr_ == ptrStart_) {
+                ptr_ = ptrEnd_;
+            }
+            return *this;
+        }
+
+        iterator operator++(int) {
             return ++(*this);
         }
 
-        friend bool operator==(const Iterator &a, const Iterator &b) {
+        iterator operator--(int) {
+            return --(*this);
+        }
+
+        friend bool operator==(const iterator &a, const iterator &b) {
             return a.ptr_ == b.ptr_;
         };
-        friend bool operator!=(const Iterator &a, const Iterator &b) {
+        friend bool operator!=(const iterator &a, const iterator &b) {
             return a.ptr_ != b.ptr_;
         };
 
@@ -117,12 +129,12 @@ public:
         pointer ptrEnd_, ptrStart_;
     };
 
-    Iterator begin() {
-        return Iterator(&data_[start_], &data_[end_ - start_ + 1], &data_[0]);
+    iterator begin() {
+        return iterator(&data_[start_], &data_[end_ - start_ + 1], &data_[0]);
     }
 
-    Iterator end() {
-        return Iterator(&data_[end_ + 1], &data_[end_ - start_ + 1], &data_[0]);
+    iterator end() {
+        return iterator(&data_[end_ + 1], &data_[end_ - start_ + 1], &data_[0]);
     }
 
     void resize() {
@@ -251,21 +263,19 @@ int find_not(T begin, T end, const U &value) {
 }
 
 template<typename T, typename U>
-int find_backwards(T &array, const U &element) {
-    int flag = -1; int count = 0;
-    for (auto elem : array) {
-        if (elem == element) {
-            flag = count;
+bool find_backwards(T &array, const U &element) {
+    for (auto it = array.end()--; it != array.begin(); it--) {
+        if (*it == element) {
+            return true;
         }
-        count++;
     }
-    return flag;
+    return false;
 }
 
 int main() {
     round_buffer<int> buffer(1, 25);
     buffer.add_end(89);
     buffer.add_end(110);
-    bool_show(is_sorted(buffer.begin(), buffer.end(), '>'));
+    bool_show(find_backwards(buffer, 110));
     std::cout << buffer.size();
-}
+}  /// Containers requirements, iterator requirements
