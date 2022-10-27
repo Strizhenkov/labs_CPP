@@ -69,7 +69,7 @@ int main() {
             a.allocate(k);
         } else if (key == 2) {
             std::cin >> num >> k;
-            long long add_int = std::stoi(num, nullptr, 16);
+            long long add_int = std::stoull(num, nullptr, 16);
             T* add = reinterpret_cast<T*>(add_int);
             a.deallocate(add, k);
         }
